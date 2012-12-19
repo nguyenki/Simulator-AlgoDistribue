@@ -6,7 +6,7 @@ package message;
 
 /**
  *
- * @author Sony
+ * @author Kim Thuat Nguyen
  */
 public enum TypeMessage {
     UNICAST,

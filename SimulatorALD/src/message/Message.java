@@ -18,9 +18,9 @@ public class Message implements Comparable<Message> {
     private int taille;
     private Machine source;
     private Machine destination;
-    private TypeMessage type;
+    private TypeMessage type; // Unicast ou Multicast
     private etatMessage etat;
-    private double date; // Time that a messege need to arrive in the destination
+    private double date; // Le temps que le message devrait normalement arriver a la destination
     
     public Message(Machine source, Machine destination, TypeMessage type, int taille, double date) {
         this.source = source;

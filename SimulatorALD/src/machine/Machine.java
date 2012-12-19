@@ -2,8 +2,6 @@ package machine;
 
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 import message.Message;
 
 /*
@@ -16,9 +14,13 @@ import message.Message;
  * @author Kim Thuat Nguyen
  */
 public class Machine {
+    // Identifier de chaque machine
     private int id;
+    // Capacite de la carte reseau pour chaque machine
     private int capacCarte;
-    // Queue qui contient les messages recus par d'autre machine
+    // Number of message emis par le machine => on l'utilise pour calculer le debit
+    private int nbMessSend = 0;
+    // Queue qui contient les messages recus par d'autre machine. Ces messages ne sont pas encore traites
     private LinkedList<Message> buffer;
     
     
@@ -55,4 +57,17 @@ public class Machine {
     public void removeMessage() {
         this.buffer.removeFirst();
     }
+
+    public int getNbMessSend() {
+        return nbMessSend;
+    }
+
+    public void setNbMessSend(int nbMessSend) {
+        this.nbMessSend = nbMessSend;
+    }
+    
+    public void incrementerNbMessSend() {
+        this.nbMessSend++;
+    }
+    
 }

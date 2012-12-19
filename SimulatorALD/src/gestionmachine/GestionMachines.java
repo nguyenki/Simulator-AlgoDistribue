@@ -4,6 +4,9 @@
  */
 package gestionmachine;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import machine.Machine;
 import message.Message;
 import message.TypeMessage;
@@ -20,12 +23,14 @@ public class GestionMachines {
     private double capaciteM;
     private static double sim_clock = 0;
     private Machine[] machinesDefault;
+    private Map<Integer, List<Message>> messArrives;
     
     public GestionMachines(int nbM,double tempsPropa, double capaciteM) {
         this.nbMachines = nbM;
         machinesDefault = new Machine[nbMachines];
         this.tempsPropa = tempsPropa;
         this.capaciteM = capaciteM;
+        this.messArrives = new HashMap<Integer, List<Message>>();
     }
 
     /********************* 
@@ -70,22 +75,41 @@ public class GestionMachines {
     public void setMachinesDefault(Machine[] machinesDefault) {
         this.machinesDefault = machinesDefault;
     }
-    
+    public Machine getMachine(int id) {
+        return this.machinesDefault[id];
+    }
     
     /*
      * Methodes principales
      */
     public void sendUnicast(Machine source, Machine destination, int taille) {
+        source.incrementerNbMessSend();
         Message mess = new Message(source, destination, TypeMessage.UNICAST, taille,taille/this.capaciteM+this.tempsPropa);
         destination.addMessage(mess);
     }
     
     public void sendMulticast(Machine source, int taille) {
+        source.incrementerNbMessSend();
         Message mess = new Message(source, null, TypeMessage.MULTICAST, taille, taille/this.capaciteM+this.tempsPropa);
         for(int i=0;i<this.nbMachines;i++) {
             if (machinesDefault[i].getId()!=source.getId()) {
                 machinesDefault[i].addMessage(mess);
             }
+        }
+    }
+    
+    /*
+     * 
+     */
+    public double getDebit() {
+        int nbMessSend = 0;
+        for (int i=0;i<this.nbMachines; i++) {
+            nbMessSend+=machinesDefault[i].getBuffer().size();
+        }
+        if (getSim_clock()==0) {
+            return 0;
+        } else {
+            return nbMessSend/getSim_clock();
         }
     }
 }
