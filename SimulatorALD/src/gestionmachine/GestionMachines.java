@@ -181,6 +181,7 @@ public class GestionMachines {
         main.EmissionSuccessive();
         System.out.println("DEBIT: "+main.getDebit());
         System.out.println("LATENCE: "+main.getLatence());
+        
     }
 }
 
