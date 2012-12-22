@@ -15,21 +15,19 @@ public class Message implements Comparable<Message> {
 
     public enum etatMessage {ARRIVE, SEND};
     
-    private int taille;
+    private double taille;
     private Machine source;
     private Machine destination;
     private TypeMessage type; // Unicast ou Multicast
-    private etatMessage etat;
     private double date; // Le temps que le message devrait normalement arriver a la destination
     
-    public Message(Machine source, Machine destination, TypeMessage type, int taille, double date) {
+    public Message(Machine source, Machine destination, TypeMessage type, double taille, double date) {
         this.source = source;
         this.destination = destination;
         this.type = type;
         this.taille = taille;
         this.date = date;
-        this.etat = etatMessage.SEND;
-    }
+     }
     
     @Override
     public int compareTo(Message o) {
@@ -42,11 +40,11 @@ public class Message implements Comparable<Message> {
         }
     }
     
-    public int getTaille() {
+    public double getTaille() {
         return taille;
     }
 
-    public void setTaille(int taille) {
+    public void setTaille(double taille) {
         this.taille = taille;
     }
 
@@ -72,6 +70,14 @@ public class Message implements Comparable<Message> {
 
     public void setType(TypeMessage type) {
         this.type = type;
+    }
+
+    public double getDate() {
+        return date;
+    }
+
+    public void setDate(double date) {
+        this.date = date;
     }
     
 }

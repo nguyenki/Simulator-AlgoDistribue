@@ -17,14 +17,20 @@ public class Machine {
     // Identifier de chaque machine
     private int id;
     // Capacite de la carte reseau pour chaque machine
-    private int capacCarte;
+    private double capacCarte;
     // Number of message emis par le machine => on l'utilise pour calculer le debit
     private int nbMessSend = 0;
     // Queue qui contient les messages recus par d'autre machine. Ces messages ne sont pas encore traites
     private LinkedList<Message> buffer;
     
+    public Machine(int id, double capacite, int nbMessSend, LinkedList<Message> buffer) {
+        this.id = id;
+        this.capacCarte = capacite;
+        this.nbMessSend = nbMessSend;
+        this.buffer = buffer;
+    }
     
-    public int getCapacCarte() {
+    public double getCapacCarte() {
         return capacCarte;
     }
 
@@ -57,7 +63,11 @@ public class Machine {
     public void removeMessage() {
         this.buffer.removeFirst();
     }
-
+   
+    public Message firstMessage() {
+        return this.buffer.element();
+    }
+   
     public int getNbMessSend() {
         return nbMessSend;
     }
@@ -69,5 +79,4 @@ public class Machine {
     public void incrementerNbMessSend() {
         this.nbMessSend++;
     }
-    
-}
+ }
