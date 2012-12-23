@@ -23,11 +23,18 @@ public class Machine {
     // Queue qui contient les messages recus par d'autre machine. Ces messages ne sont pas encore traites
     private LinkedList<Message> buffer;
     
+    
+    private double momentAvaiableToSend;
+    
+    private double momentAvaiableToReceive;
+    
     public Machine(int id, double capacite, int nbMessSend, LinkedList<Message> buffer) {
         this.id = id;
         this.capacCarte = capacite;
         this.nbMessSend = nbMessSend;
         this.buffer = buffer;
+        this.momentAvaiableToReceive = 0;
+        this.momentAvaiableToSend = 0;
     }
     
     public double getCapacCarte() {
@@ -79,4 +86,25 @@ public class Machine {
     public void incrementerNbMessSend() {
         this.nbMessSend++;
     }
+
+    public double getMomentAvaiableToSend() {
+        return momentAvaiableToSend;
+    }
+
+    public void setMomentAvaiableToSend(double momentAvaiableToSend) {
+        this.momentAvaiableToSend = momentAvaiableToSend;
+    }
+
+    public double getMomentAvaiableToReceive() {
+        return momentAvaiableToReceive;
+    }
+
+    public void setMomentAvaiableToReceive(double momentAvaiableToReceive) {
+        this.momentAvaiableToReceive = momentAvaiableToReceive;
+    }
+    
+    public String toString() {
+        return "ID:"+this.id+": Capacite:"+this.capacCarte+" : Nb message envoye: "+this.nbMessSend+" Nb message dans Buffer;"+this.buffer.size();
+    }
+    
  }

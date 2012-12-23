@@ -19,7 +19,7 @@ public class Message implements Comparable<Message> {
     private Machine source;
     private Machine destination;
     private TypeMessage type; // Unicast ou Multicast
-    private double date; // Le temps que le message devrait normalement arriver a la destination
+    private double date; // Le temps que que le message est emis
     
     public Message(Machine source, Machine destination, TypeMessage type, double taille, double date) {
         this.source = source;
