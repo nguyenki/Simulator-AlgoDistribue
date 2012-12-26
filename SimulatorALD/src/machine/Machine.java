@@ -3,6 +3,7 @@ package machine;
 import java.util.Collections;
 import java.util.LinkedList;
 import message.Message;
+import sequencer.Sequencer;
 
 /*
  * To change this template, choose Tools | Templates
@@ -107,4 +108,7 @@ public class Machine {
         return "ID:"+this.id+": Capacite:"+this.capacCarte+" : Nb message envoye: "+this.nbMessSend+" Nb message dans Buffer;"+this.buffer.size();
     }
     
+    public void sendToSenquencer(Message mess, Sequencer seq) {
+        seq.addMessToBuffer(mess);
+    }
  }

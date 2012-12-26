@@ -4,9 +4,7 @@
  */
 package gestionmachine;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import machine.Machine;
@@ -161,17 +159,7 @@ public class GestionMachines {
         }
     }
     
-    public void sendMulticast(Machine source, double taille) {
-        source.incrementerNbMessSend();
-        Message mess = new Message(source, null, TypeMessage.MULTICAST, taille, this.tempsPropa);
-        for(int i=0;i<this.nbMachines;i++) {
-            if (machinesDefault[i].getId()!=source.getId()) {
-                machinesDefault[i].addMessage(mess);
-            }
-        }
-    }
-    
- 
+   
 /************************************************************
  * Implementation pour les trois algorithmes                *
  ************************************************************/
@@ -266,7 +254,7 @@ public class GestionMachines {
      ********************************************************************************************************/
     public static void main(String args[]) {
         GestionMachines main = new GestionMachines(10, 10, 10);
-        //main.EmissionSuccessive(1,1);
+        main.EmissionSuccessive(1,1);
         //main.pipeLine(1, 200);
         //main.Arbre(1, 1);
         System.out.println("DEBIT: "+main.getDebit());
