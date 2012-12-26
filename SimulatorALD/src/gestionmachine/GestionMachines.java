@@ -195,7 +195,7 @@ public class GestionMachines {
         System.out.println("II. DisséminaHon des messages en utilisant la structure de l'arbre");
         boolean messPasEnvoye = true;
         double latence = 0;
-        List<Integer> idMachines = new ArrayList<>();
+        List<Integer> idMachines = new ArrayList<Integer>();
         idMachines.add(0);
         int j=0;
         while(j<nbMess) {

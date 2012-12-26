@@ -11,7 +11,6 @@ import machine.Machine;
 import message.Message;
 import message.TypeMessage;
 import sequencer.Sequencer;
-import sun.security.krb5.internal.crypto.Des;
 
 /**
  *
@@ -33,7 +32,7 @@ public class FixedSequencer {
         this.nbMachines = nbMachines;
         this.capaciteM = capaciteM;
         this.machinesDefault = new Machine[nbMachines];
-        this.messageArrives = new ArrayList<>();
+        this.messageArrives = new ArrayList<Message>();
         this.debit = 0;
         this.latence = 0;
         this.sequencer = new Sequencer();
@@ -121,7 +120,7 @@ public class FixedSequencer {
      *********************************************************************************/
     public void sendUnicast(Machine source, Machine destination, double taille, double date) {
         source.incrementerNbMessSend();
-        List<Machine> machines = new ArrayList<>();
+        List<Machine> machines = new ArrayList<Machine>();
         machines.add(destination);
         Message mess = new Message(source, machines, TypeMessage.UNICAST, taille, date);
         // Kiem tra may co ranh de cho gui hay khong
@@ -143,4 +142,6 @@ public class FixedSequencer {
         source.setMomentAvaiableToSend(mess.getDate()+mess.getTaille()/source.getCapacCarte());
         getSequencer().addMessToBuffer(mess);
     }
+    
+    
 }

@@ -22,12 +22,12 @@ public class Sequencer {
     
     public Sequencer(int seqNumber) {
         this.seqNumber = seqNumber;
-        this.buffer = new LinkedList<>();
+        this.buffer = new LinkedList<Message>();
     }
     
     public Sequencer() {
         this.seqNumber = 0;
-        this.buffer = new LinkedList<>();
+        this.buffer = new LinkedList<Message>();
     }
     
     public int getSeqNumber() {
@@ -67,8 +67,15 @@ public class Sequencer {
         Iterator<Machine> it = machines.iterator();
         while (it.hasNext()) {
             Machine dest = it.next();
-            dest.addMessage(mess);
+             dest.addMessage(mess);
         }
     }
- 
-}
+    
+    public void diffusionMessagesFromSequencer() {
+        Iterator<Message> it = getBuffer().iterator();
+        while (it.hasNext()) {
+            Message mess = it.next();
+            sendMessageToDestination(mess);
+        }
+    }
+ }
