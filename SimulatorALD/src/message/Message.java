@@ -79,5 +79,4 @@ public class Message implements Comparable<Message> {
     public void setDate(double date) {
         this.date = date;
     }
-    
 }

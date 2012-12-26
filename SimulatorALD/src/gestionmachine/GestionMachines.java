@@ -171,32 +171,7 @@ public class GestionMachines {
         }
     }
     
-    /*
-     * Calculer le debit du reseau
-     */
-//    public double getDebit() {
-//        int nbMessSend = 0;
-//        for (int i=0;i<this.nbMachines; i++) {
-//            nbMessSend+=machinesDefault[i].getBuffer().size();
-//        }
-//        nbMessSend+=this.messageArrives.size();
-//        if (getSim_clock()==0) {
-//            return 0;
-//        } else {
-//            return nbMessSend/getSim_clock();
-//        }
-//    }
-
-//    public double getLatence() {
-//        Iterator<Message> it = this.messageArrives.iterator();
-//        double tempsTotal = 0;
-//        while (it.hasNext()) {
-//            Message mess = it.next();
-//            tempsTotal+= mess.getDate()+mess.getTaille()/mess.getSource().getCapacCarte();
-//        }
-//        return tempsTotal/getNbMachines();
-//    }
-
+ 
 /************************************************************
  * Implementation pour les trois algorithmes                *
  ************************************************************/
