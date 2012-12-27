@@ -10,5 +10,6 @@ package message;
  */
 public enum TypeMessage {
     UNICAST,
-    MULTICAST
+    MULTICAST,
+    BROADCAST
 }
