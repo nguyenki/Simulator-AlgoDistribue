@@ -4,7 +4,9 @@
  */
 package gestionmachine;
 
+import generateurMessage.GenerateurMessages;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import machine.Machine;
@@ -18,6 +20,7 @@ import message.TypeMessage;
 public class GestionMachines {
     // On suppose qu'il y un temps de propagation
     // Le temps de transmission = tailleMessage/capacite d'une machine
+
     private double tempsPropa;
     private int nbMachines;
     private double capaciteM;
@@ -25,11 +28,11 @@ public class GestionMachines {
     private Machine[] machinesDefault;
     private List<Message> messageArrives;
     private double tailleMaxMessage;
-    
     private double debit;
     private double latence;
-    
-    public GestionMachines(int nbM,double tempsPropa, double capaciteM) {
+    //private GenerateurMessages generateur;
+
+    public GestionMachines(int nbM, double tempsPropa, double capaciteM) {
         this.nbMachines = nbM;
         machinesDefault = new Machine[nbMachines];
         this.tempsPropa = tempsPropa;
@@ -41,14 +44,16 @@ public class GestionMachines {
     }
 
     public void initiateEtatMachines(Machine[] machineDefauts, double capacite) {
-        for (int i=0;i<machineDefauts.length;i++) {
-            machineDefauts[i] = new Machine(i+1, capacite , 0, new LinkedList<Message>());
+        for (int i = 0; i < machineDefauts.length; i++) {
+            machineDefauts[i] = new Machine(i + 1, capacite, 0, new LinkedList<Message>());
         }
     }
-    
-    /********************* 
+
+    /**
+     * *******************
      * Get and Set methods
-     *********************/
+     ********************
+     */
     public double getTempsPropa() {
         return tempsPropa;
     }
@@ -88,12 +93,13 @@ public class GestionMachines {
     public void setMachinesDefault(Machine[] machinesDefault) {
         this.machinesDefault = machinesDefault;
     }
+
     public Machine getMachine(int id) {
         return this.machinesDefault[id];
     }
-    
+
     public double getTimeTransmission(double tailleMessage) {
-        return tailleMessage/this.capaciteM;
+        return tailleMessage / this.capaciteM;
     }
 
     public List<Message> getMessageArrives() {
@@ -127,18 +133,18 @@ public class GestionMachines {
     public void setLatence(double latence) {
         this.latence = latence;
     }
-    
+
     public double getUniteDeTemps(double tailleMess) {
-        return (this.tempsPropa+tailleMess/this.capaciteM);
+        return (this.tempsPropa + tailleMess / this.capaciteM);
     }
-    
+
     /*
      * Generer le message de taille variable
      */
     public double tailleMess() {
         return 1;
     }
-    
+
     /*
      * Methodes principales
      */
@@ -146,50 +152,49 @@ public class GestionMachines {
         source.incrementerNbMessSend();
         Message mess = new Message(source, destination, TypeMessage.UNICAST, taille, date);
         // Kiem tra may co ranh de cho gui hay khong
-        if (source.getMomentAvaiableToSend()> mess.getDate()) { // ko ranh
+        if (source.getMomentAvaiableToSend() > mess.getDate()) { // ko ranh
             mess.setDate(source.getMomentAvaiableToSend());
         }
-        source.setMomentAvaiableToSend(mess.getDate()+mess.getTaille()/source.getCapacCarte());
+        source.setMomentAvaiableToSend(mess.getDate() + mess.getTaille() / source.getCapacCarte());
         // Kiem tra xem may co ranh de ma nhan hay khong
-        if (destination.getMomentAvaiableToReceive()<mess.getDate()+this.tempsPropa) { // May ranh
+        if (destination.getMomentAvaiableToReceive() < mess.getDate() + this.tempsPropa) { // May ranh
             this.messageArrives.add(mess);
-            destination.setMomentAvaiableToReceive(mess.getDate()+this.tempsPropa+mess.getTaille()/source.getCapacCarte());
+            destination.setMomentAvaiableToReceive(mess.getDate() + this.tempsPropa + mess.getTaille() / source.getCapacCarte());
         } else {
             destination.addMessage(mess);
         }
     }
-    
-   
-/************************************************************
- * Implementation pour les trois algorithmes                *
- ************************************************************/
 
-
-/*
- * N emission successives
- * On suppose que le premiere machine va envoyer les messages pour les autres machines
- */
+    /**
+     * **********************************************************
+     * Implementation pour les trois algorithmes *
+ ***********************************************************
+     */
+    /*
+     * N emission successives
+     * On suppose que le premiere machine va envoyer les messages pour les autres machines
+     */
     public void EmissionSuccessive(double tailleMess, int nbMess) {
-        int i=1, j=0; // initialise le identifier de machine
+        int i = 1, j = 0; // initialise le identifier de machine
         double latence = 0;
         System.out.println("I. N Emissions successives des messages ");
-        System.out.println("Time: "+ getSim_clock());
-        while (j<nbMess) {
-            System.out.println("Numero de message: "+j);
+        System.out.println("Time: " + getSim_clock());
+        while (j < nbMess) {
+            System.out.println("Numero de message: " + j);
             double temps = getSim_clock();
-            while (i<this.nbMachines) {
-                sendUnicast(this.machinesDefault[0], this.machinesDefault[i] , tailleMess,getSim_clock()); //TODO
-                setSim_clock(getSim_clock()+ getUniteDeTemps(tailleMess));
-                System.out.println("Time:"+getSim_clock()+"\n"+this.machinesDefault[i].toString()+"\n a recu un message\n --------------------------");
+            while (i < this.nbMachines) {
+                sendUnicast(this.machinesDefault[0], this.machinesDefault[i], tailleMess, getSim_clock()); //TODO
+                setSim_clock(getSim_clock() + getUniteDeTemps(tailleMess));
+                System.out.println("Time:" + getSim_clock() + "\n" + this.machinesDefault[i].toString() + "\n a recu un message\n --------------------------");
                 i++;
             }
-            latence+=(getSim_clock()- temps)/getUniteDeTemps(tailleMess);
-            i=1;
+            latence += (getSim_clock() - temps) / getUniteDeTemps(tailleMess);
+            i = 1;
             j++;
         }
-       setDebit(nbMess*getUniteDeTemps(tailleMess) /getSim_clock());
-       setLatence(latence/nbMess);
-    } 
+        setDebit(nbMess * getUniteDeTemps(tailleMess) / getSim_clock());
+        setLatence(latence / nbMess);
+    }
 
     public void Arbre(double tailleMess, int nbMess) {
         System.out.println("II. DisséminaHon des messages en utilisant la structure de l'arbre");
@@ -197,68 +202,78 @@ public class GestionMachines {
         double latence = 0;
         List<Integer> idMachines = new ArrayList<Integer>();
         idMachines.add(0);
-        int j=0;
-        while(j<nbMess) {
+        int j = 0;
+        while (j < nbMess) {
             double temp = getSim_clock();
-            while(messPasEnvoye) {
-                int i=0;
+            while (messPasEnvoye) {
+                int i = 0;
                 int length = idMachines.size();
-                while (i<length) {
-                    if (length+i>= getNbMachines()) {
+                while (i < length) {
+                    if (length + i >= getNbMachines()) {
                         messPasEnvoye = false;
                         break;
                     } else {
-                        sendUnicast(this.machinesDefault[i], this.machinesDefault[i+length], tailleMess, getSim_clock());
-                        idMachines.add(i+length);
+                        sendUnicast(this.machinesDefault[i], this.machinesDefault[i + length], tailleMess, getSim_clock());
+                        idMachines.add(i + length);
                     }
                     i++;
                 }
-                    setSim_clock(getSim_clock()+getUniteDeTemps(tailleMess));
-                    if (idMachines.size()==getNbMachines()) break;
-               }
-            latence+= (getSim_clock()-temp)/getUniteDeTemps(tailleMess);
+                setSim_clock(getSim_clock() + getUniteDeTemps(tailleMess));
+                if (idMachines.size() == getNbMachines()) {
+                    break;
+                }
+            }
+            latence += (getSim_clock() - temp) / getUniteDeTemps(tailleMess);
             messPasEnvoye = true;
             j++;
         }
-        setDebit(nbMess/(getSim_clock()/getUniteDeTemps(tailleMess)));
-        setLatence(latence/nbMess);
+        setDebit(nbMess / (getSim_clock() / getUniteDeTemps(tailleMess)));
+        setLatence(latence / nbMess);
     }
-    
+
     public void pipeLine(double tailleMess, int nbMess) {
         System.out.println("III. DisséminaHon des messages en utilisant la structure pipe line");
-        int i=0, j=0; 
+        int i = 0, j = 0;
         double latence = 0;
-        System.out.println("Time: "+ getSim_clock());
-        while (j<nbMess) {
-            System.out.println("Numero de message: "+j);
+        System.out.println("Time: " + getSim_clock());
+        while (j < nbMess) {
+            System.out.println("Numero de message: " + j);
             double temps = getSim_clock();
-            while (i<this.nbMachines-1) {
-                sendUnicast(this.machinesDefault[i], this.machinesDefault[i+1] , tailleMess,getSim_clock()); //TODO
-                setSim_clock(getSim_clock()+ getUniteDeTemps(tailleMess));
-                System.out.println("Time:"+getSim_clock()+"\n"+this.machinesDefault[i].toString()+"\n a recu un message\n --------------------------");
+            while (i < this.nbMachines - 1) {
+                sendUnicast(this.machinesDefault[i], this.machinesDefault[i + 1], tailleMess, getSim_clock()); //TODO
+                setSim_clock(getSim_clock() + getUniteDeTemps(tailleMess));
+                System.out.println("Time:" + getSim_clock() + "\n" + this.machinesDefault[i].toString() + "\n a recu un message\n --------------------------");
                 i++;
             }
-            latence+=(getSim_clock()- temps)/getUniteDeTemps(tailleMess);
-            i=0;
+            latence += (getSim_clock() - temps) / getUniteDeTemps(tailleMess);
+            i = 0;
             j++;
-            if (j!=(nbMess)) {
-                setSim_clock(temps+getUniteDeTemps(tailleMess));
+            if (j != (nbMess)) {
+                setSim_clock(temps + getUniteDeTemps(tailleMess));
             }
         }
-       setDebit(nbMess*getUniteDeTemps(tailleMess)/getSim_clock());
-       setLatence(latence/nbMess);
+        setDebit(nbMess * getUniteDeTemps(tailleMess) / getSim_clock());
+        setLatence(latence / nbMess);
     }
-    
-    /********************************************************************************************************
-     *                           EXPERIMENTATION PARTIE                                                     *
-     ********************************************************************************************************/
+
+    /**
+     * ******************************************************************************************************
+     * EXPERIMENTATION PARTIE *
+     *******************************************************************************************************
+     */
     public static void main(String args[]) {
         GestionMachines main = new GestionMachines(10, 10, 10);
-        main.EmissionSuccessive(1,1);
+        //main.EmissionSuccessive(1, 1);
         //main.pipeLine(1, 200);
         //main.Arbre(1, 1);
-        System.out.println("DEBIT: "+main.getDebit());
-        System.out.println("LATENCE: "+main.getLatence());
+        //System.out.println("DEBIT: "+main.getDebit());
+        //System.out.println("LATENCE: "+main.getLatence());
+        GenerateurMessages generateur = new GenerateurMessages(15, 10);
+        //List<Message> listMessageGeneres = generateur.generateListMessageUnicast(2, main.machinesDefault);
+        //List<Message> listMessageGeneres = generateur.generateListMessageMutilcast(10, main.machinesDefault);
+        List<Message> listMessageGeneres = generateur.generateListMessageBroadcast(5, main.machinesDefault);
+        for(Message list:listMessageGeneres){
+            System.out.println("LIST OF MESSAGES IS GENERATED: " + " Taille: "+list.getTaille()+"  Date: "+list.getDate()+"  Souce: "+list.getSource().getId()+" Destination: "+list.getDestinations().toString() );
+        }
     }
 }
-
