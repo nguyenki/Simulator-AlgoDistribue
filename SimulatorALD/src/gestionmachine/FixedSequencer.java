@@ -5,6 +5,7 @@
 package gestionmachine;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import machine.Machine;
@@ -40,7 +41,7 @@ public class FixedSequencer {
     }
 
     
-       public void initiateEtatMachines(Machine[] machineDefauts, double capacite) {
+     public void initiateEtatMachines(Machine[] machineDefauts, double capacite) {
         for (int i=0;i<machineDefauts.length;i++) {
             machineDefauts[i] = new Machine(i+1, capacite , 0, new LinkedList<Message>());
         }
@@ -143,5 +144,67 @@ public class FixedSequencer {
         getSequencer().addMessToBuffer(mess);
     }
     
+    public void send(Message mess) {
+        mess.getSource().incrementerNbMessSend();
+        if (mess.getSource().getMomentAvaiableToSend()>mess.getDate()) {
+            mess.setDate(mess.getSource().getMomentAvaiableToSend());
+        }
+        mess.getSource().setMomentAvaiableToSend(mess.getDate()+mess.getTaille()/mess.getSource().getCapacCarte());
+        getSequencer().addMessToBuffer(mess);
+    }
+    
+    public void sendAllMessGeneratedToSequencer(List<Message> messages) {
+        Iterator<Message> it = messages.iterator();
+        while (it.hasNext()) {
+            Message mess = it.next();
+            send(mess);
+        }
+    }
+    
+    public void deliverMessages() {
+        // Xay dung 1 list cac messages phu thuoc vao mot message trong qua trinh xu ly
+        List<Message> dependances = new LinkedList<Message>();
+         
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+        
+    }
+    
+    public static void main(String args[]) {
+        // Initialize N machines
+        FixedSequencer fixSequencer = new FixedSequencer(10,10, 1);
+        
+        // Generate the messages
+        
+        
+        // Send messages from sources to Sequencer
+        
+        
+        // Send messages from Sequencer to Destinations
+        
+        
+        // Destinations deliver the messages received
+
+
+    }
     
 }

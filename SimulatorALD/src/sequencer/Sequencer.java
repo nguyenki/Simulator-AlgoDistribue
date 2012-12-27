@@ -71,7 +71,8 @@ public class Sequencer {
         }
     }
     
-    public void diffusionMessagesFromSequencer() {
+    public void diffusionMessagesFromSequencerToDestinations() {
+        assignSequenceNumber(getBuffer());
         Iterator<Message> it = getBuffer().iterator();
         while (it.hasNext()) {
             Message mess = it.next();
