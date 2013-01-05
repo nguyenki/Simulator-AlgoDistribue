@@ -1,6 +1,7 @@
 package machine;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import message.Message;
 import sequencer.Sequencer;
@@ -108,7 +109,44 @@ public class Machine {
         return "ID:"+this.id+": Capacite:"+this.capacCarte+" : Nb message envoye: "+this.nbMessSend+" Nb message dans Buffer;"+this.buffer.size();
     }
     
+    public String printContentBuffer() {
+        String rs = "";
+        int indice = 0;
+        Iterator<Message> it = this.buffer.iterator();
+        while (it.hasNext()) {
+            Message m = it.next();
+            rs+="Message "+indice+":\n"+m.toString()+"\n"+"------------------------------------";
+            indice++;
+        }
+        return rs;
+    }
+    
     public void sendToSenquencer(Message mess, Sequencer seq) {
         seq.addMessToBuffer(mess);
+    }
+    
+    public Message removeMessFromBuffer(int nbSequence) {
+        Message mess = null;
+        Iterator<Message> it = getBuffer().iterator();
+        while (it.hasNext()) {
+            Message m = it.next();
+            if (m.getNumeroSequencer() == nbSequence) {
+                mess = m;
+            }
+        }
+        getBuffer().remove(mess);
+        return mess;
+    }
+    
+    public Message findMessageBySequenceNumber(int nbSequence) {
+        Message mess = null;
+        Iterator<Message> it = getBuffer().iterator();
+        while (it.hasNext()) {
+            Message m = it.next();
+            if (m.getNumeroSequencer() == nbSequence) {
+                mess = m;
+            }
+        }
+        return mess;
     }
  }

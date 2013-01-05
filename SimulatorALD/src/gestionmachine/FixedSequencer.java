@@ -5,9 +5,13 @@
 package gestionmachine;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import machine.Machine;
 import message.Message;
 import message.TypeMessage;
@@ -21,12 +25,15 @@ public class FixedSequencer {
     private double limitTime; // Temps limite pour la simulation
     private int nbMachines;
     private double capaciteM; // Capacite pour chaque machine. Le capacite pour chaque machine peut varier
+    private double tempsPropa;
     private Machine[] machinesDefault;
     private List<Message> messageArrives;
     
     private double debit;
     private double latence;
     private Sequencer sequencer;
+    
+    
     
     public FixedSequencer(double limitTime, int nbMachines, double capaciteM) {
         this.limitTime = limitTime;
@@ -43,7 +50,7 @@ public class FixedSequencer {
     
      public void initiateEtatMachines(Machine[] machineDefauts, double capacite) {
         for (int i=0;i<machineDefauts.length;i++) {
-            machineDefauts[i] = new Machine(i+1, capacite , 0, new LinkedList<Message>());
+            machineDefauts[i] = new Machine(i, capacite , 0, new LinkedList<Message>());
         }
     }
  
@@ -57,6 +64,14 @@ public class FixedSequencer {
 
     public void setLimitTime(double limitTime) {
         this.limitTime = limitTime;
+    }
+
+    public double getTempsPropa() {
+        return tempsPropa;
+    }
+
+    public void setTempsPropa(double tempsPropa) {
+        this.tempsPropa = tempsPropa;
     }
 
     public int getNbMachines() {
@@ -83,6 +98,10 @@ public class FixedSequencer {
         this.machinesDefault = machinesDefault;
     }
 
+    public Machine getMachine(int id) {
+        return this.machinesDefault[id];
+    }    
+    
     public List<Message> getMessageArrives() {
         return messageArrives;
     }
@@ -114,6 +133,7 @@ public class FixedSequencer {
     public void setSequencer(Sequencer sequencer) {
         this.sequencer = sequencer;
     }
+
     
     
     /*********************************************************************************
@@ -158,53 +178,128 @@ public class FixedSequencer {
         while (it.hasNext()) {
             Message mess = it.next();
             send(mess);
-        }
+        }   
     }
     
     public void deliverMessages() {
         // Xay dung 1 list cac messages phu thuoc vao mot message trong qua trinh xu ly
-        List<Message> dependances = new LinkedList<Message>();
-         
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-        
+        while (!getSequencer().getSequenceNbsOfMachine().isEmpty()) {
+            Node node = new Node(getLastMinimumSequenceNumber(getSequencer().getSequenceNbsOfMachine()));
+            System.out.println("DEBUG: SEQUENCES NUMBER POUR CHAQUE MACHINES:"+getSequencer().getSequenceNbsOfMachine().toString());
+            System.out.println("DEBUG delivermessage: "+node.getName().toString());
+            node.buildListDependencies(node.getName(), this);
+            System.out.println("\n+++++++++++++++\n List dependencies:"+node.getDependences().toString());
+            System.out.println("+++++++In deliver messages:"+node.isDeadlock());
+            node.resolveDependencies(this);
+        }
     }
     
-    public static void main(String args[]) {
-        // Initialize N machines
-        FixedSequencer fixSequencer = new FixedSequencer(10,10, 1);
+    // Tim kiem so sequence nho nhat trong list cac sequence number doi voi moi machine
+    public LinkedList<Integer> getLastMinimumSequenceNumber(Map<LinkedList<Integer>,LinkedList<Integer>> sequenceNbOfMachines) {
+        LinkedList<Integer> list = new LinkedList<Integer>();
+        int temp = Integer.MAX_VALUE;
+        LinkedList<Integer> sd = new LinkedList<Integer>();
+        Iterator<Map.Entry<LinkedList<Integer>, LinkedList<Integer>>> it = sequenceNbOfMachines.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<LinkedList<Integer>, LinkedList<Integer>> map = it.next();
+            if (temp >= map.getValue().getFirst()) {
+                temp = map.getValue().getFirst();
+                sd = map.getKey();
+            }
+        }
         
-        // Generate the messages
-        
-        
-        // Send messages from sources to Sequencer
-        
-        
-        // Send messages from Sequencer to Destinations
-        
-        
-        // Destinations deliver the messages received
-
-
+        for (Integer s: sd) {
+            list.add(s);
+        }
+        list.addLast(temp);
+        return list; // sous forme [idMachineSource, idMachineDestination, nbSequence]
     }
     
+    public void deliverAMessage(int nbSequence, int idDestinationMachine) {
+        // Remove message from buffer
+        Message m = this.machinesDefault[idDestinationMachine].removeMessFromBuffer(nbSequence);
+        if (this.machinesDefault[idDestinationMachine].getMomentAvaiableToReceive()< (m.getDate()+getTempsPropa())) {
+            this.machinesDefault[idDestinationMachine].setMomentAvaiableToReceive(getUniteTemps(m, this.machinesDefault[idDestinationMachine]));
+        } else {
+            this.machinesDefault[idDestinationMachine].setMomentAvaiableToReceive(getMachine(idDestinationMachine).getMomentAvaiableToReceive()+m.getTaille()/getMachine(idDestinationMachine).getCapacCarte());
+        }
+        m.setDateMessDelivre(getMachine(idDestinationMachine).getMomentAvaiableToReceive());
+        System.out.println("*****************Delivred a messages:********************\n"+m.toString());
+        this.messageArrives.add(m);
+    }
+    
+    public double getUniteTemps(Message m, Machine machine) {
+        return getTempsPropa()+m.getTaille()/machine.getCapacCarte()+m.getDate();
+    }
+    
+    // Tim gia tri sequence number nho nhat cho 1 nguon xac dinh
+    public int findSmallestSequenceNumberForASource(int idSource) {
+        LinkedList<Integer> minimumListSequenceAccordingToDestination = new LinkedList<Integer>();
+        Set<LinkedList<Integer>> keys = getSequencer().getSequenceNbsOfMachine().keySet();
+        for (LinkedList<Integer> key: keys) {
+            if (key.getFirst() == idSource) {
+                if (getSequencer().getSequenceNbsOfMachine().containsKey(key)) {
+                    minimumListSequenceAccordingToDestination.add(getSequencer().getSequenceNbsOfMachine().get(key).getFirst());
+                }
+            }
+        }
+        Collections.sort(minimumListSequenceAccordingToDestination);
+        if (minimumListSequenceAccordingToDestination.isEmpty()) {
+            return Integer.MAX_VALUE;
+        } else {
+            return minimumListSequenceAccordingToDestination.getFirst();
+        }
+    }
+    
+    // Tim gia tri sequence nho ngay sau 1 sequence nb khac cho 1 nguon xac dinh
+    public LinkedList<Integer> findLastSmallerSequenceNumberForASource(int idSource, int nbSequence) {
+        LinkedList<Integer> rs = new LinkedList<Integer>();
+        LinkedList<Integer> listAllSequences = getAllSequenceNumberForASource(idSource);
+        if (listAllSequences.contains(nbSequence)) {
+            if (listAllSequences.size()>=2) {
+                int index = listAllSequences.indexOf(nbSequence);
+                if (index>=1) {
+                    rs  = findOriginBySequenceNumber(listAllSequences.get(index-1));
+                    rs.addLast(listAllSequences.get(index-1));
+                }
+            }
+        }
+        return rs;
+    }
+    
+    public LinkedList<Integer> getAllSequenceNumberForASource(int idSource) {
+        LinkedList<Integer> list = new LinkedList<Integer>();
+        Set<LinkedList<Integer>> keys = getSequencer().getSequenceNbsOfMachine().keySet();
+        for (LinkedList<Integer> key: keys) {
+            if (key.getFirst() == idSource) {
+                if (getSequencer().getSequenceNbsOfMachine().containsKey(key)) {
+                    for (Integer sq: getSequencer().getSequenceNbsOfMachine().get(key)) {
+                        list.add(sq);
+                    }
+                }
+            }
+        }
+        Collections.sort(list);
+        return list;
+    }
+    
+    public LinkedList<Integer> findOriginBySequenceNumber(int sequenceNb) {
+        LinkedList<Integer> rs = new LinkedList<Integer>();
+        LinkedList<Integer> value = new LinkedList<Integer>();
+        Collection<LinkedList<Integer>> values = getSequencer().getSequenceNbsOfMachine().values();
+        for (LinkedList<Integer> l:values) {
+            if (l.contains(sequenceNb)) {
+                value = l;
+            }
+        }
+        
+        for (LinkedList<Integer> k: getSequencer().getSequenceNbsOfMachine().keySet()) {
+            if (getSequencer().getSequenceNbsOfMachine().get(k).equals(value)) {
+                rs = k;
+            }
+        }
+        return rs;
+    }
+    
+  
 }

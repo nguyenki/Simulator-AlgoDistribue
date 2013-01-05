@@ -1,6 +1,7 @@
 package message;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import machine.Machine;
 
@@ -23,6 +24,7 @@ public class Message implements Comparable<Message> {
     private TypeMessage type; // Unicast ou Multicast
     private double date; // Le temps que que le message est emis
     private double dateMessDelivre; // Le temps que le message est delivre
+    private double dateOriginGenerated;
     private int numeroSequencer;
             
     public Message(Machine source, Machine destination, TypeMessage type, double taille, double date) {
@@ -32,6 +34,7 @@ public class Message implements Comparable<Message> {
         this.taille = taille;
         this.date = date;
         this.dateMessDelivre = date;
+        this.dateOriginGenerated = date;
         this.numeroSequencer = 0;
      }
     
@@ -42,6 +45,7 @@ public class Message implements Comparable<Message> {
         this.taille = taille;
         this.date = date;
         this.dateMessDelivre = date;
+        this.dateOriginGenerated = date;
         this.numeroSequencer = 0;
     }
     @Override
@@ -110,6 +114,31 @@ public class Message implements Comparable<Message> {
     public void setNumeroSequencer(int numeroSequencer) {
         this.numeroSequencer = numeroSequencer;
     }
+
+    public double getDateMessDelivre() {
+        return dateMessDelivre;
+    }
+
+    public void setDateMessDelivre(double dateMessDelivre) {
+        this.dateMessDelivre = dateMessDelivre;
+    }
+
+    public double getDateOriginGenerated() {
+        return dateOriginGenerated;
+    }
+
+    public void setDateOriginGenerated(double dateOriginGenerated) {
+        this.dateOriginGenerated = dateOriginGenerated;
+    }
     
-    
+    public String toString() {
+        int idSource = this.getSource().getId();
+        List<Integer> idDest = new ArrayList<Integer>();
+        Iterator<Machine> it = this.destinations.iterator();
+        while (it.hasNext()) {
+            Machine ma = it.next();
+            idDest.add(ma.getId());
+        }
+        return "Message INFO: IdSource:"+idSource+"|| idDestinations:"+idDest.toString()+"|| type:"+this.type+"|| Date origin generated:"+this.dateOriginGenerated+"|| Date sent:"+this.date+"||Date arrived:"+this.dateMessDelivre+"|| Sequence number:"+this.numeroSequencer+"\n";
+    }
 }
