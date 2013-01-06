@@ -334,7 +334,7 @@ public class FixedSequencer {
     public void pipeLine(double tailleMess, int nbMess) {
         System.out.println("III. DisséminaHon des messages en utilisant la structure pipe line");
         int i = 0, j = 0;
-        double latence;
+        double latence=0;
         double dateSent = 0;  
         double temp = 0;
         while (j<nbMess) {
@@ -344,6 +344,7 @@ public class FixedSequencer {
                 dateSent+= getUniteTemps(i, tailleMess);
                 i++;
             }
+            latence+=(dateSent-temp)/getUniteTemps(0, tailleMess);
             temp+= getUniteTemps(0, tailleMess);
             i=0;
             j++;
@@ -352,24 +353,61 @@ public class FixedSequencer {
         getSequencer().diffusionMessagesFromSequencerToDestinations();
         deliverMessages();
         setDebit(nbMess/(dateSent/getUniteTemps(0, tailleMess)));
-        setLatence(dateSent/nbMess);
+        setLatence(latence/nbMess);
     }
 
     public void Arbre(double tailleMess, int nbMess) {
-        
+        System.out.println("II. DisséminaHon des messages en utilisant la structure de l'arbre");
+        boolean messPasEnvoye = true;
+        double latence = 0;
+        List<Integer> idMachines = new ArrayList<Integer>();
+        idMachines.add(0);
+        int j = 0;
+        double dateSent = 0;
+        while (j < nbMess) {
+            double temp = dateSent;
+            while (messPasEnvoye) {
+                int i = 0;
+                int length = idMachines.size();
+                while (i < length) {
+                    if (length + i >= getNbMachines()) {
+                        messPasEnvoye = false;
+                        break;
+                    } else {
+                        sendUnicast(getMachine(i), getMachine(i+length), tailleMess, dateSent);
+                        idMachines.add(i + length);
+                    }
+                    i++;
+                }
+                dateSent+= getUniteTemps(0, tailleMess);
+                if (idMachines.size() == getNbMachines()) {
+                    break;
+                }
+            }
+            latence += (dateSent - temp) / getUniteTemps(0,tailleMess);
+            messPasEnvoye = true;
+            j++;
+        }
+        getSequencer().assignSequenceNumber(getSequencer().getBuffer());
+        getSequencer().diffusionMessagesFromSequencerToDestinations();
+        deliverMessages();
+        setDebit(nbMess / (dateSent / getUniteTemps(0,tailleMess)));
+        setLatence(latence / nbMess);
     }
     
     public double getUniteTemps(int idM, double tailleMess) {
         return (tailleMess/getMachine(idM).getCapacCarte()+getTempsPropa());
     }
     public static void main(String args[]) {
-        FixedSequencer fixSequencer = new FixedSequencer(10,4, 1);
+        FixedSequencer fixSequencer = new FixedSequencer(10,17, 1);
 //        fixSequencer.EmissionSuccessive(10, 1);
 //        System.out.println("Messagages arrivees:"+fixSequencer.getMessageArrives().toString());
 //        System.out.println("DEBIT:"+fixSequencer.getDebit());
 //        System.out.println("Latence:"+fixSequencer.getLatence());
         
-        fixSequencer.pipeLine(10, 20);
+        //fixSequencer.pipeLine(10, 10);
+        fixSequencer.Arbre(10, 1);
         System.out.println("DEBIT:"+fixSequencer.getDebit());
+        System.out.println("LATENCE:"+fixSequencer.getLatence());
     }
 }

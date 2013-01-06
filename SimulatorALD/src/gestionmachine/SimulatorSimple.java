@@ -16,7 +16,7 @@ import message.TypeMessage;
  *
  * @author nguyenki
  */
-public class GestionMachines {
+public class SimulatorSimple {
     // On suppose qu'il y un temps de propagation
     // Le temps de transmission = tailleMessage/capacite d'une machine
 
@@ -31,7 +31,7 @@ public class GestionMachines {
     private double latence;
     //private GenerateurMessages generateur;
 
-    public GestionMachines(int nbM, double tempsPropa, double capaciteM) {
+    public SimulatorSimple(int nbM, double tempsPropa, double capaciteM) {
         this.nbMachines = nbM;
         machinesDefault = new Machine[nbMachines];
         this.tempsPropa = tempsPropa;
@@ -82,7 +82,7 @@ public class GestionMachines {
     }
 
     public static void setSim_clock(double sim_clock) {
-        GestionMachines.sim_clock = sim_clock;
+        SimulatorSimple.sim_clock = sim_clock;
     }
 
     public Machine[] getMachinesDefault() {
@@ -261,7 +261,7 @@ public class GestionMachines {
      *******************************************************************************************************
      */
     public static void main(String args[]) {
-        GestionMachines main = new GestionMachines(5, 10, 10);
+        SimulatorSimple main = new SimulatorSimple(5, 10, 10);
         //main.EmissionSuccessive(1, 1);
         main.pipeLine(1, 10);
         //main.Arbre(1, 1);

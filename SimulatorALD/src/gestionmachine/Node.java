@@ -14,7 +14,7 @@ import message.Message;
  * @author kimthuatnguyen
  */
 public class Node {
-    private LinkedList<Integer> name;
+    private LinkedList<Integer> name; // [idSource, idDestination, nbSequence]
     private LinkedList<LinkedList<Integer>> dependences;
     private boolean deadlock = false;
     
