@@ -261,18 +261,18 @@ public class GestionMachines {
      *******************************************************************************************************
      */
     public static void main(String args[]) {
-        GestionMachines main = new GestionMachines(10, 10, 10);
+        GestionMachines main = new GestionMachines(5, 10, 10);
         //main.EmissionSuccessive(1, 1);
-        //main.pipeLine(1, 200);
+        main.pipeLine(1, 10);
         //main.Arbre(1, 1);
-        //System.out.println("DEBIT: "+main.getDebit());
-        //System.out.println("LATENCE: "+main.getLatence());
-        GenerateurMessages generateur = new GenerateurMessages(15, 10);
+        System.out.println("DEBIT: "+main.getDebit());
+        System.out.println("LATENCE: "+main.getLatence());
+        //GenerateurMessages generateur = new GenerateurMessages(15, 10);
         //List<Message> listMessageGeneres = generateur.generateListMessageUnicast(2, main.machinesDefault);
         //List<Message> listMessageGeneres = generateur.generateListMessageMutilcast(10, main.machinesDefault);
-        List<Message> listMessageGeneres = generateur.generateListMessageBroadcast(5, main.machinesDefault);
-        for(Message list:listMessageGeneres){
-            System.out.println("LIST OF MESSAGES IS GENERATED: " + " Taille: "+list.getTaille()+"  Date: "+list.getDate()+"  Souce: "+list.getSource().getId()+" Destination: "+list.getDestinations().toString() );
-        }
+//        List<Message> listMessageGeneres = generateur.generateListMessageBroadcast(5, main.machinesDefault);
+//        for(Message list:listMessageGeneres){
+//            System.out.println("LIST OF MESSAGES IS GENERATED: " + " Taille: "+list.getTaille()+"  Date: "+list.getDate()+"  Souce: "+list.getSource().getId()+" Destination: "+list.getDestinations().toString() );
+//        }
     }
 }

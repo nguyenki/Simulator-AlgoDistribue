@@ -149,7 +149,6 @@ public class FixedSequencer {
             mess.setDate(source.getMomentAvaiableToSend());
         }
         source.setMomentAvaiableToSend(mess.getDate()+mess.getTaille()/source.getCapacCarte());
-        
         getSequencer().addMessToBuffer(mess);
     }
     
@@ -301,5 +300,76 @@ public class FixedSequencer {
         return rs;
     }
     
-  
+    /*
+     * IMPLEMENTATION DE 3 ALGORITHMES DANS LE COURS    
+     * 
+     */
+    
+    
+    /*************************************************************************************
+     * N emission successives
+     * On suppose que le premiere machine va envoyer les messages pour les autres machines
+     *************************************************************************************/
+    public void EmissionSuccessive(double tailleMess, int nbMess) {
+        System.out.println("I. N Emissions successives des messages ");
+        int i=1; // Initialise l'identifier de la deuxieme machine
+        int j=0; // Initialise le nb de message
+        int dateSent = 0;
+        // Envoyer messages aux sequencer
+        while (j<nbMess) {
+            while (i<getNbMachines()) {
+                sendUnicast(getMachine(0), getMachine(i), tailleMess, dateSent);
+                dateSent+=tailleMess/getMachine(0).getCapacCarte()+getTempsPropa();
+                i++;
+            }
+            j++;
+        }
+        getSequencer().assignSequenceNumber(getSequencer().getBuffer());
+        getSequencer().diffusionMessagesFromSequencerToDestinations();
+        deliverMessages();
+        setDebit(nbMess/(dateSent/getUniteTemps(0, tailleMess)));
+        setLatence((dateSent/getUniteTemps(0, tailleMess))/nbMess);
+    }
+    
+    public void pipeLine(double tailleMess, int nbMess) {
+        System.out.println("III. DisséminaHon des messages en utilisant la structure pipe line");
+        int i = 0, j = 0;
+        double latence;
+        double dateSent = 0;  
+        double temp = 0;
+        while (j<nbMess) {
+            dateSent = temp;
+            while (i<getNbMachines()-1) {
+                sendUnicast(getMachine(i), getMachine(i+1), tailleMess, dateSent);
+                dateSent+= getUniteTemps(i, tailleMess);
+                i++;
+            }
+            temp+= getUniteTemps(0, tailleMess);
+            i=0;
+            j++;
+        }
+        getSequencer().assignSequenceNumber(getSequencer().getBuffer());
+        getSequencer().diffusionMessagesFromSequencerToDestinations();
+        deliverMessages();
+        setDebit(nbMess/(dateSent/getUniteTemps(0, tailleMess)));
+        setLatence(dateSent/nbMess);
+    }
+
+    public void Arbre(double tailleMess, int nbMess) {
+        
+    }
+    
+    public double getUniteTemps(int idM, double tailleMess) {
+        return (tailleMess/getMachine(idM).getCapacCarte()+getTempsPropa());
+    }
+    public static void main(String args[]) {
+        FixedSequencer fixSequencer = new FixedSequencer(10,4, 1);
+//        fixSequencer.EmissionSuccessive(10, 1);
+//        System.out.println("Messagages arrivees:"+fixSequencer.getMessageArrives().toString());
+//        System.out.println("DEBIT:"+fixSequencer.getDebit());
+//        System.out.println("Latence:"+fixSequencer.getLatence());
+        
+        fixSequencer.pipeLine(10, 20);
+        System.out.println("DEBIT:"+fixSequencer.getDebit());
+    }
 }

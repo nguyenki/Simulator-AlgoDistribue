@@ -18,30 +18,14 @@ import message.Message;
  * @author Kim Thuat Nguyen
  */
 public class Sequencer {
-    private int seqNumber;
     private LinkedList<Message> buffer; // Contient tous les messages envoyes par les sources
     private Map<LinkedList<Integer>, LinkedList<Integer>> sequenceNbsOfMachine; // Contient tous les listes de numeros de sequence pour chaque machine
     
-    public Sequencer(int seqNumber) {
-        this.seqNumber = seqNumber;
-        this.buffer = new LinkedList<Message>();
-        this.sequenceNbsOfMachine = new HashMap<LinkedList<Integer>, LinkedList<Integer>>();
-    }
-    
     public Sequencer() {
-        this.seqNumber = 0;
         this.buffer = new LinkedList<Message>();
         this.sequenceNbsOfMachine = new HashMap<LinkedList<Integer>, LinkedList<Integer>>();
     }
     
-    public int getSeqNumber() {
-        return seqNumber;
-    }
-
-    public void setSeqNumber(int seqNumber) {
-        this.seqNumber = seqNumber;
-    }
-
     public Map<LinkedList<Integer>, LinkedList<Integer>> getSequenceNbsOfMachine() {
         return sequenceNbsOfMachine;
     }
@@ -115,7 +99,6 @@ public class Sequencer {
             }
             nbSequence++;
         }
-        setSeqNumber(buffer.size());
     }
     
     public void sendMessageToDestination(Message mess) {
