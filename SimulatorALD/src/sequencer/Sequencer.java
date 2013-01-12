@@ -81,6 +81,12 @@ public class Sequencer {
         Collections.sort(buffer);
     }
     
+    public void addMessToBuffer(List<Message> listMess) {
+        Iterator<Message> it = listMess.iterator();
+        while (it.hasNext()) {
+            addMessToBuffer(it.next());
+        }
+    }
     public void assignSequenceNumber(LinkedList<Message> buffer) {
         int nbSequence = 0;
         Iterator<Message> it = buffer.iterator();
@@ -122,4 +128,9 @@ public class Sequencer {
             sendMessageToDestination(mess);
         }
     }
+    
+    public void printAllSequenceListForEachMachine() {
+        System.out.println(getBuffer().toString());
+    }
+    
  }

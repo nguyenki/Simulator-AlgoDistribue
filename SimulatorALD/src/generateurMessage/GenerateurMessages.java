@@ -30,7 +30,7 @@ public class GenerateurMessages {
     public GenerateurMessages() {
     }
     
-
+    
     public double getLimitTime() {
         return limitTime;
     }

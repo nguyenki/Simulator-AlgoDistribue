@@ -4,7 +4,10 @@
  */
 package gestionmachine;
 
+import generateurMessage.GenerateurMessages;
 import java.util.LinkedList;
+import java.util.List;
+import message.Message;
 
 /**
  *
@@ -13,6 +16,9 @@ import java.util.LinkedList;
 public class Test {
     public static void main(String args[]) {
         // Initialize N machines
+
+        
+        /*
         FixedSequencer fixSequencer = new FixedSequencer(10,3, 1);
         
         
@@ -43,25 +49,22 @@ public class Test {
         fixSequencer.deliverMessages();
         System.out.println("Message arrived:"+fixSequencer.getMessageArrives().toString());
         
-//        LinkedList<Integer> l = new LinkedList<Integer>();
-//        l.addLast(2); l.addLast(0);
-//        fixSequencer.getSequencer().removeSequenceNumberInList(l,1);
-//        System.out.println("SEQUENCE NUMBERS OF EACH MACHINE:"+fixSequencer.getSequencer().getSequenceNbsOfMachine().toString());
-//        
-//        System.out.println("Smallest sequence number for a source:  "+fixSequencer.findSmallestSequenceNumberForASource(2));
-//        System.out.println("Origin by sequence number:"+fixSequencer.findOriginBySequenceNumber(5).toString());
-//        System.out.println("Last smaller sequence number for a source:"+fixSequencer.findLastSmallerSequenceNumberForASource(2, 1));
-//        // Node test
-//        Node n = new Node(fixSequencer.getLastMinimumSequenceNumber(fixSequencer.getSequencer().getSequenceNbsOfMachine()));
-//        n.buildListDependencies(n.getName(), fixSequencer);
-//        System.out.println("SEQUENCE NUMBERS OF EACH MACHINE:"+fixSequencer.getSequencer().getSequenceNbsOfMachine().toString());
-//        System.out.println("BUFFER CONTENT"+fixSequencer.getMachine(2).printContentBuffer());
-//        System.out.println("List dependencies: "+n.getDependences().toString());
-//        LinkedList<Integer> l = new LinkedList<Integer>(); l.addLast(1); l.addLast(2);
-//        System.out.println("SEQUENCE NUMBERS OF EACH MACHINE:"+fixSequencer.getSequencer().getSequenceNbsOfMachine().toString());
-//        System.out.println("Last minimum sequence number:"+fixSequencer.getLastMinimumSequenceNumber(fixSequencer.getSequencer().getSequenceNbsOfMachine()).toString());
-//        
+        *
+        */
         
+        FixedSequencer fixedSeq = new FixedSequencer(10, 3, 1000);
+        GenerateurMessages generateur = new GenerateurMessages(10, 500);
+        List<Message> messUnicast = generateur.generateListMessageUnicast(3, fixedSeq.getMachinesDefault());
+        List<Message> messMulticast = generateur.generateListMessageMutilcast(2, fixedSeq.getMachinesDefault());
+        List<Message> messBroadcast = generateur.generateListMessageBroadcast(1, fixedSeq.getMachinesDefault());
+        fixedSeq.getSequencer().addMessToBuffer(messUnicast);
+        fixedSeq.getSequencer().addMessToBuffer(messMulticast);
+        fixedSeq.getSequencer().addMessToBuffer(messBroadcast);
+        fixedSeq.getSequencer().assignSequenceNumber(fixedSeq.getSequencer().getBuffer());
+        
+        fixedSeq.getSequencer().printAllSequenceListForEachMachine();
+        //fixedSeq.getSequencer().diffusionMessagesFromSequencerToDestinations();
+        //fixedSeq.deliverMessages();
         
     }
 }
