@@ -398,6 +398,33 @@ public class FixedSequencer {
     public double getUniteTemps(int idM, double tailleMess) {
         return (tailleMess/getMachine(idM).getCapacCarte()+getTempsPropa());
     }
+    
+    public void valideOrderTotal() {
+        
+    }
+    
+    public List<Message> getMessArrivedBySource(Integer idSource) {
+        List<Message> list = new ArrayList<Message>();
+        for (Message m: getMessageArrives()) {
+            if (m.getSource().getId() == idSource) {
+                list.add(m);
+            }
+        }
+        return list;
+    }
+    
+    public void valideOrderSequenceForSource(Integer idSource) {
+        List<Message> list = getMessArrivedBySource(idSource);
+        Message temp = null;
+        for (Message m1: list) {
+            for (Message m2: list) {
+                if (m1.getDateMessDelivre()>m2.getDateMessDelivre()) {
+        
+                }
+            }
+        } 
+   }
+    
     public static void main(String args[]) {
         FixedSequencer fixSequencer = new FixedSequencer(10,17, 1);
 //        fixSequencer.EmissionSuccessive(10, 1);
