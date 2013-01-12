@@ -5,7 +5,6 @@
 package gestionmachine;
 
 import generateurMessage.GenerateurMessages;
-import java.util.LinkedList;
 import java.util.List;
 import message.Message;
 
@@ -54,17 +53,17 @@ public class Test {
         
         FixedSequencer fixedSeq = new FixedSequencer(10, 3, 1000);
         GenerateurMessages generateur = new GenerateurMessages(10, 500);
-        List<Message> messUnicast = generateur.generateListMessageUnicast(3, fixedSeq.getMachinesDefault());
-        List<Message> messMulticast = generateur.generateListMessageMutilcast(2, fixedSeq.getMachinesDefault());
-        List<Message> messBroadcast = generateur.generateListMessageBroadcast(1, fixedSeq.getMachinesDefault());
+        List<Message> messUnicast = generateur.generateListMessageUnicast(20, fixedSeq.getMachinesDefault());
+        List<Message> messMulticast = generateur.generateListMessageMutilcast(8, fixedSeq.getMachinesDefault());
+        List<Message> messBroadcast = generateur.generateListMessageBroadcast(5, fixedSeq.getMachinesDefault());
         fixedSeq.getSequencer().addMessToBuffer(messUnicast);
         fixedSeq.getSequencer().addMessToBuffer(messMulticast);
         fixedSeq.getSequencer().addMessToBuffer(messBroadcast);
         fixedSeq.getSequencer().assignSequenceNumber(fixedSeq.getSequencer().getBuffer());
         
         fixedSeq.getSequencer().printAllSequenceListForEachMachine();
-        //fixedSeq.getSequencer().diffusionMessagesFromSequencerToDestinations();
-        //fixedSeq.deliverMessages();
-        
+        fixedSeq.getSequencer().diffusionMessagesFromSequencerToDestinations();
+        fixedSeq.deliverMessages();
+        fixedSeq.valideOrderTotal();
     }
 }

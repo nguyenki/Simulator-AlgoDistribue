@@ -4,6 +4,7 @@
  */
 package generateurMessage;
 
+import gestionmachine.FixedSequencer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import java.util.Random;
 import machine.Machine;
 import message.Message;
 import message.TypeMessage;
+import sequencer.Sequencer;
 
 /**
  *
@@ -148,5 +150,18 @@ public class GenerateurMessages {
         }
         Collections.sort(listMessages);
         return listMessages;
+    }
+    
+    public static void  main(String args[]) {
+        FixedSequencer fx = new FixedSequencer(10,3, 1000);
+        GenerateurMessages generateur = new GenerateurMessages(10, 1000);
+        
+        List<Message> messUnicast = generateur.generateListMessageUnicast(4, fx.getMachinesDefault());
+        List<Message> messMulticast = generateur.generateListMessageMutilcast(8, fx.getMachinesDefault());
+        List<Message> messBroadcast = generateur.generateListMessageBroadcast(2, fx.getMachinesDefault());
+        System.out.println("UNICAST:"+messUnicast.toString());
+        System.out.println("MULTICAST:"+messMulticast.toString());
+        System.out.println("BROADCAST:"+messBroadcast.toString());
+        
     }
 }

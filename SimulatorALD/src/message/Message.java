@@ -30,6 +30,7 @@ public class Message implements Comparable<Message> {
     public Message(Machine source, Machine destination, TypeMessage type, double taille, double date) {
         this.source = source;
         this.destinations = new ArrayList<Machine>();
+        this.destinations.add(destination);
         this.type = type;
         this.taille = taille;
         this.date = date;
@@ -139,6 +140,9 @@ public class Message implements Comparable<Message> {
             Machine ma = it.next();
             idDest.add(ma.getId());
         }
-        return "Message INFO: IdSource:"+idSource+"|| idDestinations:"+idDest.toString()+"|| type:"+this.type+"|| Date origin generated:"+this.dateOriginGenerated+"|| Date sent:"+this.date+"||Date arrived:"+this.dateMessDelivre+"|| Sequence number:"+this.numeroSequencer+"\n";
+        return "Message INFO: IdSource:"+idSource+"|| idDestinations:"+idDest.toString()+"|| type:"+this.type+
+                "   ||  Taille:"+this.taille+"|| Date origin generated:"+this.dateOriginGenerated+"|| Date sent:"
+                +this.date+"||Date arrived:"+this.dateMessDelivre+"|| Sequence number:"
+                +this.numeroSequencer+"\n";
     }
 }

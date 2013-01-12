@@ -399,8 +399,19 @@ public class FixedSequencer {
         return (tailleMess/getMachine(idM).getCapacCarte()+getTempsPropa());
     }
     
-    public void valideOrderTotal() {
-        
+    public boolean valideOrderTotal() {
+        boolean isCorrect = true;
+        for (int i=0; i< getNbMachines(); i++) {
+            boolean isValideBySource = true;
+            isValideBySource = valideOrderSequenceForSource(i);
+            isCorrect = isCorrect && isValideBySource;
+        }
+        if (isCorrect) {
+            System.out.println("Total order is CORRECT");
+        } else {
+            System.out.println("Total order is NOT correct");
+        }
+        return isCorrect;
     }
     
     public List<Message> getMessArrivedBySource(Integer idSource) {
@@ -413,16 +424,28 @@ public class FixedSequencer {
         return list;
     }
     
-    public void valideOrderSequenceForSource(Integer idSource) {
+    public boolean valideOrderSequenceForSource(Integer idSource) {
+        boolean isValide = true;
         List<Message> list = getMessArrivedBySource(idSource);
         Message temp = null;
-        for (Message m1: list) {
-            for (Message m2: list) {
-                if (m1.getDateMessDelivre()>m2.getDateMessDelivre()) {
-        
+        for (int i=0; i< list.size(); i++) {
+            for (int j=i; j<list.size(); j++) {
+                if (list.get(i).getDateMessDelivre()>= list.get(j).getMessDelivre()) {
+                    temp = list.get(i);
+                    list.set(i, list.get(j));
+                    list.set(j, temp);
                 }
             }
-        } 
+        }
+        if (list.size()>=1) {
+            for (int i=0; i<list.size()-1; i++) {
+                if (list.get(i).getNumeroSequencer()>list.get(i+1).getNumeroSequencer()) {
+                    isValide = false;
+                    System.out.println("Source machine:"+i+"\n Total order is not correct for this 2 messages:\n"+list.get(i).toString()+"\n"+list.get(i+1).toString());
+                }
+            }
+        }
+        return isValide;
    }
     
     public static void main(String args[]) {
