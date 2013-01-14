@@ -34,7 +34,7 @@ public class Sequencer {
         this.sequenceNbsOfMachine = sequenceNbsOfMachine;
     }
 
-    public void addSequenceNbToList(LinkedList<Integer> idList, int nbSequence) {
+    public void addSequenceNbToList(LinkedList<Integer> idList, Integer nbSequence) {
         if (getSequenceNbsOfMachine().containsKey(idList)) {
             if (!getSequenceNbsOfMachine().get(idList).contains(nbSequence)) {
                 getSequenceNbsOfMachine().get(idList).add(nbSequence);
@@ -132,5 +132,4 @@ public class Sequencer {
     public void printAllSequenceListForEachMachine() {
         System.out.println(getBuffer().toString());
     }
-    
  }

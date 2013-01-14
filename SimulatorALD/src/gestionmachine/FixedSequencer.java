@@ -7,6 +7,7 @@ package gestionmachine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class FixedSequencer {
     
     
     
-    public FixedSequencer(double limitTime, int nbMachines, double capaciteM) {
+    public FixedSequencer(double limitTime, int nbMachines, double capaciteM, double tempsPropa) {
         this.limitTime = limitTime;
         this.nbMachines = nbMachines;
         this.capaciteM = capaciteM;
@@ -44,6 +45,7 @@ public class FixedSequencer {
         this.debit = 0;
         this.latence = 0;
         this.sequencer = new Sequencer();
+        this.tempsPropa = tempsPropa;
         initiateEtatMachines(this.machinesDefault, capaciteM);
     }
 
@@ -184,14 +186,13 @@ public class FixedSequencer {
         // Xay dung 1 list cac messages phu thuoc vao mot message trong qua trinh xu ly
         while (!getSequencer().getSequenceNbsOfMachine().isEmpty()) {
             Node node = new Node(getLastMinimumSequenceNumber(getSequencer().getSequenceNbsOfMachine()));
-            System.out.println("DEBUG: SEQUENCES NUMBER POUR CHAQUE MACHINES:"+getSequencer().getSequenceNbsOfMachine().toString());
-            System.out.println("DEBUG delivermessage: "+node.getName().toString());
             node.buildListDependencies(node.getName(), this);
-            System.out.println("\n+++++++++++++++\n List dependencies:"+node.getDependences().toString());
-            System.out.println("+++++++In deliver messages:"+node.isDeadlock());
+            System.out.println("NODE EXEMPLE:"+node.toString());
+            System.out.println("List de dependences:"+node.getDependences().toString());
             node.resolveDependencies(this);
         }
     }
+    
     
     // Tim kiem so sequence nho nhat trong list cac sequence number doi voi moi machine
     public LinkedList<Integer> getLastMinimumSequenceNumber(Map<LinkedList<Integer>,LinkedList<Integer>> sequenceNbOfMachines) {
@@ -212,7 +213,7 @@ public class FixedSequencer {
         }
         list.addLast(temp);
         return list; // sous forme [idMachineSource, idMachineDestination, nbSequence]
-    }
+    }   
     
     public void deliverAMessage(int nbSequence, int idDestinationMachine) {
         // Remove message from buffer
@@ -441,15 +442,54 @@ public class FixedSequencer {
             for (int i=0; i<list.size()-1; i++) {
                 if (list.get(i).getNumeroSequencer()>list.get(i+1).getNumeroSequencer()) {
                     isValide = false;
-                    System.out.println("Source machine:"+i+"\n Total order is not correct for this 2 messages:\n"+list.get(i).toString()+"\n"+list.get(i+1).toString());
+                    System.out.println("Source machine:"+list.get(i).getSource().getId() +"\n Total order is not correct for this 2 messages:\n"+list.get(i).toString()+"\n"+list.get(i+1).toString());
                 }
             }
         }
         return isValide;
    }
     
+    /* Calculer le debit du reseau 
+     * Debit Total = sum (debit sur chaque machine)
+     */
+    public void calculateDebit() {
+        Map<Integer, Integer> nbMessEachSource =  new HashMap<Integer, Integer>();
+        Map<Integer, Double> sumEachSource = new HashMap<Integer, Double>();
+        for (int i=0;i<getNbMachines();i++) {
+            nbMessEachSource.put(i, 1);
+            sumEachSource.put(i, 1.0);
+        }
+        
+        for (Message m: getMessageArrives()) {
+            int temp1 = nbMessEachSource.get(m.getSource().getId());
+            double temps2 = sumEachSource.get(m.getSource().getId());
+            temp1+=1;
+            temps2+= (m.getDateMessDelivre()-m.getDate())/getUniteTemps(m.getSource().getId(), m.getSource().getCapacCarte());
+            nbMessEachSource.put(m.getSource().getId(), temp1);
+            sumEachSource.put(m.getSource().getId(), temps2);
+        }
+        
+        double debit = 0;
+        for (int i=0;i<getNbMachines();i++) {
+            debit+= nbMessEachSource.get(i)/sumEachSource.get(i);
+        }
+       setDebit(debit);
+    }
+    /* Supposons qu'on a un liste de messages arrives. Definissons: 
+     * dSi: le date qu'un message i est envoye'
+     * dAi: la date qu'un message i est arrive'
+     * latence = (sum[0->nbMessTotal](dAi-dSi)/uniteTemps(source qui envoie message i))/nbMessTotal
+     */
+    public void calculLatence() {
+        double temp = 0;
+        for (Message m: getMessageArrives()) {
+            temp+=(m.getDateMessDelivre()-m.getDate())/getUniteTemps(m.getSource().getId(), m.getTaille());
+        }
+        setLatence(temp/(getSequencer().getBuffer().size()));
+    }
+    
     public static void main(String args[]) {
-        FixedSequencer fixSequencer = new FixedSequencer(10,17, 1);
+        FixedSequencer fixSequencer = new FixedSequencer(10,17, 1,2);
 //        fixSequencer.EmissionSuccessive(10, 1);
 //        System.out.println("Messagages arrivees:"+fixSequencer.getMessageArrives().toString());
 //        System.out.println("DEBIT:"+fixSequencer.getDebit());

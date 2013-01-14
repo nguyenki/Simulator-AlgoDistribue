@@ -51,11 +51,16 @@ public class Test {
         *
         */
         
-        FixedSequencer fixedSeq = new FixedSequencer(10, 3, 1000);
-        GenerateurMessages generateur = new GenerateurMessages(10, 500);
-        List<Message> messUnicast = generateur.generateListMessageUnicast(20, fixedSeq.getMachinesDefault());
-        List<Message> messMulticast = generateur.generateListMessageMutilcast(8, fixedSeq.getMachinesDefault());
-        List<Message> messBroadcast = generateur.generateListMessageBroadcast(5, fixedSeq.getMachinesDefault());
+        FixedSequencer fixedSeq = new FixedSequencer(24, 14, 1000,2);
+        GenerateurMessages generateur = new GenerateurMessages(10, 100);
+        List<Message> messBroadcast = generateur.generateListMessageBroadcast(20, fixedSeq.getMachinesDefault());
+        List<Message> messMulticast = generateur.generateListMessageMutilcast(12, fixedSeq.getMachinesDefault());
+        List<Message> messUnicast = generateur.generateListMessageUnicast(60, fixedSeq.getMachinesDefault());
+        
+        //fixedSeq.sendUnicast(fixedSeq.getMachine(0), fixedSeq.getMachine(4), 1000, 0);
+        //fixedSeq.sendUnicast(fixedSeq.getMachine(1), fixedSeq.getMachine(3), 10000, 2);
+        
+        
         fixedSeq.getSequencer().addMessToBuffer(messUnicast);
         fixedSeq.getSequencer().addMessToBuffer(messMulticast);
         fixedSeq.getSequencer().addMessToBuffer(messBroadcast);
@@ -65,5 +70,12 @@ public class Test {
         fixedSeq.getSequencer().diffusionMessagesFromSequencerToDestinations();
         fixedSeq.deliverMessages();
         fixedSeq.valideOrderTotal();
+        fixedSeq.calculateDebit();
+        fixedSeq.calculLatence();
+        System.out.println("NUMBER OF MESS ARRIVED:"+fixedSeq.getMessageArrives().size());
+        System.out.println("NUMBER OF MESS SEND:"+fixedSeq.getSequencer().getBuffer().size());
+        System.out.println("DEBIT:"+fixedSeq.getDebit());
+        System.out.println("LATENCE:"+fixedSeq.getLatence());
+        
     }
 }

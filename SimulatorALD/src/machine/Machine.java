@@ -25,7 +25,6 @@ public class Machine {
     // Queue qui contient les messages recus par d'autre machine. Ces messages ne sont pas encore traites
     private LinkedList<Message> buffer;
     
-    
     private double momentAvaiableToSend;
     
     private double momentAvaiableToReceive;

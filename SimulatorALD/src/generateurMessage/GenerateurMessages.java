@@ -129,6 +129,7 @@ public class GenerateurMessages {
     }
 
     public List<Message> generateListMessageBroadcast(int n, Machine[] machines) {
+        
         List<Message> listMessages = new ArrayList<Message>();
         List<Machine> listDestinations = Arrays.asList(machines);
         int i = 0;
@@ -138,14 +139,21 @@ public class GenerateurMessages {
             double date = limitTime * randomGenerator.nextDouble();
             double tailleMessage = tailleMessageMax * randomGenerator.nextDouble();
             int idSource = randomGenerator.nextInt(length);
+            List<Machine> newList = new ArrayList<Machine>();
+            for (Machine m: listDestinations) {
+                if (m.getId()!=idSource) {
+                    newList.add(m);
+                }
+            }
             if (listMessages != null) {
-                while (listMessages.contains(new Message(machines[idSource], listDestinations, TypeMessage.BROADCAST, tailleMessage, date))) {
+                
+                while (listMessages.contains(new Message(machines[idSource], newList, TypeMessage.BROADCAST, tailleMessage, date))) {
                     date = limitTime * randomGenerator.nextDouble();
                     tailleMessage = tailleMessageMax * randomGenerator.nextDouble();
                     idSource = randomGenerator.nextInt(length);
                 }
             }
-            listMessages.add(new Message(machines[idSource], listDestinations, TypeMessage.BROADCAST, tailleMessage, date));
+            listMessages.add(new Message(machines[idSource], newList, TypeMessage.BROADCAST, tailleMessage, date));
             i++;
         }
         Collections.sort(listMessages);
@@ -153,7 +161,7 @@ public class GenerateurMessages {
     }
     
     public static void  main(String args[]) {
-        FixedSequencer fx = new FixedSequencer(10,3, 1000);
+        FixedSequencer fx = new FixedSequencer(10,3, 1000,2);
         GenerateurMessages generateur = new GenerateurMessages(10, 1000);
         
         List<Message> messUnicast = generateur.generateListMessageUnicast(4, fx.getMachinesDefault());

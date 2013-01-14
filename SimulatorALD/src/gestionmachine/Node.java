@@ -63,7 +63,6 @@ public class Node {
         Integer nbSequence = list.getLast();
         int idMachineSource = list.get(0);
         int idMachineDestination = list.get(1);
-        //System.out.println(idMachineSource+":-----:"+ idMachineDestination+":-----:"+nbSequence);
         LinkedList<Integer> temp = new LinkedList<Integer>();
         // neu gap 1 cai la header ma ko phu thuoc vao bat ky cai sequence nb nao thi cung co the dung luon
         LinkedList<Integer> sd = new LinkedList<Integer>();
@@ -113,6 +112,7 @@ public class Node {
             return true;
         }
         if (isDeadlock()) {
+            System.out.println("DEADLOCK DETECTED");
             LinkedList<Integer> smallestSequenceNb = findSmallestDependenciesSequenceNumber();
             nbSequence = smallestSequenceNb.removeLast();
             fixedSequencer.deliverAMessage(nbSequence, smallestSequenceNb.get(1));
@@ -123,11 +123,9 @@ public class Node {
             return true;
         } else {
             LinkedList<Integer> headerToResolve = this.dependences.removeLast();
-            System.out.println("DEBUG: HEADER:"+headerToResolve.toString());
             fixedSequencer.deliverAMessage(headerToResolve.getLast(), headerToResolve.get(1));
             nbSequence = headerToResolve.removeLast();
             fixedSequencer.getSequencer().removeSequenceNumberInList(headerToResolve, nbSequence);
-            System.out.println("In:resolveDependeicies: DEBUG dependencies:"+getDependences().toString());
             if (getDependences().isEmpty()) {
                 return true;
             } else {
@@ -150,5 +148,10 @@ public class Node {
         }
         this.dependences.remove(l);
         return l;
-    } 
+    }
+    
+    @Override
+    public String toString() {
+        return "Name:"+this.name.toString()+"   || Dependencies:  "+this.dependences.toString();
+    }
 }
