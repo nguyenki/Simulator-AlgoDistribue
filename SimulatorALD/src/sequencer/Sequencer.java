@@ -60,7 +60,6 @@ public class Sequencer {
             if (index!=-1) {
                 newList.remove(index);
             }
-            System.out.println("DEBUG: REMOVED SEQUENCE NB:"+nbSequence+":  idList:"+idList.toString());
             getSequenceNbsOfMachine().put(idList, newList);
         }
         if (getSequenceNbsOfMachine().get(idList).isEmpty()) {
@@ -88,6 +87,7 @@ public class Sequencer {
         }
     }
     public void assignSequenceNumber(LinkedList<Message> buffer) {
+        System.out.println("Assigning the sequence number for each message in sequencer...................");
         int nbSequence = 0;
         Iterator<Message> it = buffer.iterator();
         while (it.hasNext()) {
@@ -105,6 +105,8 @@ public class Sequencer {
             }
             nbSequence++;
         }
+        System.out.println("Sequence number for each message assigned successfully");
+        System.out.println("List of all message sent to sequencer:\n"+buffer.toString());
     }
     
     public void sendMessageToDestination(Message mess) {
@@ -121,7 +123,6 @@ public class Sequencer {
      * before another one who have a smaller sequencer number
     */
     public void diffusionMessagesFromSequencerToDestinations() {
-        assignSequenceNumber(getBuffer());
         Iterator<Message> it = getBuffer().iterator();
         while (it.hasNext()) {
             Message mess = it.next();

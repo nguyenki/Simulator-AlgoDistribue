@@ -4,7 +4,6 @@
  */
 package gestionmachine;
 
-import generateurMessage.GenerateurMessages;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -267,12 +266,5 @@ public class SimulatorSimple {
         //main.Arbre(1, 1);
         System.out.println("DEBIT: "+main.getDebit());
         System.out.println("LATENCE: "+main.getLatence());
-        //GenerateurMessages generateur = new GenerateurMessages(15, 10);
-        //List<Message> listMessageGeneres = generateur.generateListMessageUnicast(2, main.machinesDefault);
-        //List<Message> listMessageGeneres = generateur.generateListMessageMutilcast(10, main.machinesDefault);
-//        List<Message> listMessageGeneres = generateur.generateListMessageBroadcast(5, main.machinesDefault);
-//        for(Message list:listMessageGeneres){
-//            System.out.println("LIST OF MESSAGES IS GENERATED: " + " Taille: "+list.getTaille()+"  Date: "+list.getDate()+"  Souce: "+list.getSource().getId()+" Destination: "+list.getDestinations().toString() );
-//        }
     }
 }

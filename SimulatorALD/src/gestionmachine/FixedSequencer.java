@@ -4,6 +4,7 @@
  */
 package gestionmachine;
 
+import config.Config;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -183,12 +184,9 @@ public class FixedSequencer {
     }
     
     public void deliverMessages() {
-        // Xay dung 1 list cac messages phu thuoc vao mot message trong qua trinh xu ly
         while (!getSequencer().getSequenceNbsOfMachine().isEmpty()) {
             Node node = new Node(getLastMinimumSequenceNumber(getSequencer().getSequenceNbsOfMachine()));
             node.buildListDependencies(node.getName(), this);
-            System.out.println("NODE EXEMPLE:"+node.toString());
-            System.out.println("List de dependences:"+node.getDependences().toString());
             node.resolveDependencies(this);
         }
     }
@@ -224,7 +222,7 @@ public class FixedSequencer {
             this.machinesDefault[idDestinationMachine].setMomentAvaiableToReceive(getMachine(idDestinationMachine).getMomentAvaiableToReceive()+m.getTaille()/getMachine(idDestinationMachine).getCapacCarte());
         }
         m.setDateMessDelivre(getMachine(idDestinationMachine).getMomentAvaiableToReceive());
-        System.out.println("*****************Delivred a messages:********************\n"+m.toString());
+        System.out.println("*****************Delivred a messages in destination machine "+idDestinationMachine+" ********************\n"+m.toString());
         this.messageArrives.add(m);
     }
     
@@ -332,7 +330,11 @@ public class FixedSequencer {
         setLatence((dateSent/getUniteTemps(0, tailleMess))/nbMess);
     }
     
-    public void pipeLine(double tailleMess, int nbMess) {
+    /*************************************************************************************
+     * PipeLine
+     * On suppose que le premiere machine va envoyer les messages pour les autres machines
+     *************************************************************************************/
+     public void pipeLine(double tailleMess, int nbMess) {
         System.out.println("III. DisséminaHon des messages en utilisant la structure pipe line");
         int i = 0, j = 0;
         double latence=0;
@@ -357,7 +359,11 @@ public class FixedSequencer {
         setLatence(latence/nbMess);
     }
 
-    public void Arbre(double tailleMess, int nbMess) {
+    /*************************************************************************************
+     * Arbre
+     * On suppose que le premiere machine va envoyer les messages pour les autres machines
+     *************************************************************************************/
+     public void Arbre(double tailleMess, int nbMess) {
         System.out.println("II. DisséminaHon des messages en utilisant la structure de l'arbre");
         boolean messPasEnvoye = true;
         double latence = 0;
@@ -489,15 +495,15 @@ public class FixedSequencer {
     }
     
     public static void main(String args[]) {
-        FixedSequencer fixSequencer = new FixedSequencer(10,17, 1,2);
-//        fixSequencer.EmissionSuccessive(10, 1);
-//        System.out.println("Messagages arrivees:"+fixSequencer.getMessageArrives().toString());
-//        System.out.println("DEBIT:"+fixSequencer.getDebit());
-//        System.out.println("Latence:"+fixSequencer.getLatence());
+        // Config preparation
+        Config config = new Config("config");
+        // Initialiser N machine et l'etat initial du simulateur a partir du fichier config.properties
+        FixedSequencer fixedSequencer = config.getExperimentationDB();
         
-        //fixSequencer.pipeLine(10, 10);
-        fixSequencer.Arbre(10, 1);
-        System.out.println("DEBIT:"+fixSequencer.getDebit());
-        System.out.println("LATENCE:"+fixSequencer.getLatence());
+        //fixedSequencer.EmissionSuccessive(config.getTailleMess3Algo(), config.getNbMess3Algo());
+        //fixedSequencer.pipeLine(config.getTailleMess3Algo(), config.getNbMess3Algo());
+        fixedSequencer.Arbre(config.getTailleMess3Algo(), config.getNbMess3Algo());
+        System.out.println("DEBIT:"+fixedSequencer.getDebit());
+        System.out.println("LATENCE:"+fixedSequencer.getLatence());
     }
 }

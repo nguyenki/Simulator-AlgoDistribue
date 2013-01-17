@@ -161,7 +161,7 @@ public class GenerateurMessages {
     }
     
     public static void  main(String args[]) {
-        FixedSequencer fx = new FixedSequencer(10,3, 1000,2);
+        FixedSequencer fx = new FixedSequencer(10,3, 1000,2);  //[limitTime, nbMachine, capaciteMachine, temps propagation]
         GenerateurMessages generateur = new GenerateurMessages(10, 1000);
         
         List<Message> messUnicast = generateur.generateListMessageUnicast(4, fx.getMachinesDefault());
@@ -170,6 +170,5 @@ public class GenerateurMessages {
         System.out.println("UNICAST:"+messUnicast.toString());
         System.out.println("MULTICAST:"+messMulticast.toString());
         System.out.println("BROADCAST:"+messBroadcast.toString());
-        
     }
 }
