@@ -47,9 +47,9 @@ public class Node {
         this.deadlock = deadlock;
     }
     
-    /*
+    /**********************************
      * Methodes
-     */
+     **********************************/
     public void addDependency(LinkedList<Integer> dependecy) {
         this.dependences.addLast(dependecy);
     }
@@ -69,7 +69,6 @@ public class Node {
         sd.addLast(idMachineSource);
         sd.addLast(idMachineDestination);
         if (nbSequence == fixedSequencer.findSmallestSequenceNumberForASource(idMachineSource)) {
-           // Neu so sequence da la nho nhat thi chi can kiem tra thang header cua buffer va them vao list dependencies
            if (fixedSequencer.getMachine(idMachineDestination).getBuffer().isEmpty()) {
                return false;
            }

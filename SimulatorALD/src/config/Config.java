@@ -11,6 +11,7 @@ import java.util.Properties;
 /**
  *
  * @author Kim Thuat Nguyen
+ * @author Dang Chuan Nguyen
  */
 public class Config {
     Properties properties;
