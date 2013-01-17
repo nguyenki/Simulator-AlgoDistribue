@@ -1,0 +1,3 @@
+To run the project, you can import directly the project in Netbeans.
+Or just use the command line: javac [nameFile java]
+Maybe you have to modify the Path variable if you are in windows
